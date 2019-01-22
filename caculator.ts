@@ -79,8 +79,8 @@
         }
         updateResult():void{
             let result
-            let n1:string=parseFloat(this.n1)
-            let n2:string=parseFloat(this.n2)
+            let n1:number=parseFloat(this.n1)
+            let n2:number=parseFloat(this.n2)
                 if (this.operator==='+') {
                     result=n1+n2;
                 }else if(this.operator==='-'){
