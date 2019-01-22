@@ -1,5 +1,4 @@
 {
-
     class Calculator{
         constructor(){
             this.createContainer()
@@ -7,9 +6,10 @@
             this.createButtons()
             this.bindEvents()
         }
-        public n1:number
-        public n2:number
-        public operator:string
+        public n1:number=null
+        public n2:number=null
+        public operator:string=null
+        public result:number=null
         public container:HTMLDivElement;
         public keys:Array<Array<string>>=[
             [  "clear", "÷", ],
@@ -17,7 +17,6 @@
             [ "4", "5", "6", "-"],
             [ "1", "2", "3", "+"],
             ["0", ".", "="]]
-    
         private output:HTMLDivElement;
         private span:HTMLSpanElement;
         createButtons(){
@@ -56,48 +55,61 @@
             output.appendChild(span)
             this.span=span
         }
+        updateN(number:string,text:string){
+            if(this[number]){
+                this[number]=parseInt(this[number].toString()+ text)                  
+            }else{
+                this[number]=parseInt(text)
+            }
+            this.span.textContent=this[number].toString()
+        }
+        updateNumber(text:string){
+                if(this.operator){
+                    this.updateN('n2',text)
+                }else{
+                    this.updateN('n1',text)
+                }
+                
+        }
+        updateResult(){
+            let result
+                if (this.operator==='+') {
+                    result=this.n1+this.n2;
+                }else if(this.operator==='-'){
+                    result=this.n1-this.n2;
+                }else if (this.operator==='x') {
+                    result=this.n1*this.n2;
+                }else if (this.operator==='÷') {
+                    result=this.n1/this.n2;
+                }
+                this.span.textContent=result.toString()
+                this.n1=null
+                this.n2=null
+                this.operator=null
+                this.result=result
+
+        }
+        typeJudge(text:string){
+            if ('0123456789'.indexOf(text)>=0) {
+                this.updateNumber(text)
+            }
+            else if ('+-x÷'.indexOf(text)>=0) {
+                if (this.n1===null) {
+                    this.n1=this.result
+                }
+                this.operator=text                
+            }else if ('='.indexOf(text)>=0) {
+                this.updateResult()                
+            }else if('clear'.indexOf(text)>=0){
+                this.span.textContent='0'
+            }
+        }
         bindEvents(){
             this.container.addEventListener('click',(e)=>{
                 if(e.target instanceof HTMLButtonElement){
                     let button =e.target
                     let text =button.textContent
-                    //判断字符类型
-                    if ('0123456789'.indexOf(text)>=0) {
-                        if(this.operator){
-                            if(this.n2){
-                                this.n2=parseInt(this.n2.toString()+ text)                  
-                            }else{
-                                this.n2=parseInt(text)
-                            }
-                            this.span.textContent=this.n2.toString()
-                        }else{
-                            if(this.n1){
-                                this.n1=parseInt(this.n1.toString()+ text)                  
-                            }else{
-                                this.n1=parseInt(text)
-                            }
-                            this.span.textContent=this.n1.toString()
-                        
-                        }
-                        
-                    }else if ('+-x÷'.indexOf(text)>=0) {
-                        this.operator=text                
-                    }else if ('='.indexOf(text)>=0) {
-                        let result
-                        if (this.operator==='+') {
-                            result=this.n1+this.n2;
-                        }else if(this.operator==='-'){
-                            result=this.n1-this.n2;
-                        }else if (this.operator==='x') {
-                            result=this.n1*this.n2;
-                        }else if (this.operator==='÷') {
-                            result=this.n1/this.n2;
-                        }
-                        this.span.textContent=result.toString()
-        
-                    }else if('clear'.indexOf(text)>=0){
-                        this.span.textContent='0'
-                    }
+                    this.typeJudge(text)
                 }         
             })
         }

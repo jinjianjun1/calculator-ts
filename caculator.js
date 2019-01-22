@@ -1,6 +1,10 @@
 {
     var Calculator = /** @class */ (function () {
         function Calculator() {
+            this.n1 = null;
+            this.n2 = null;
+            this.operator = null;
+            this.result = null;
             this.keys = [
                 ["clear", "÷",],
                 ["7", "8", "9", "x"],
@@ -48,24 +52,21 @@
             output.appendChild(span);
             this.span = span;
         };
-        Calculator.prototype.updateNumber = function (text) {
-            if (this.operator) {
-                if (this.n2) {
-                    this.n2 = parseInt(this.n2.toString() + text);
-                }
-                else {
-                    this.n2 = parseInt(text);
-                }
-                this.span.textContent = this.n2.toString();
+        Calculator.prototype.updateN = function (number, text) {
+            if (this[number]) {
+                this[number] = parseInt(this[number].toString() + text);
             }
             else {
-                if (this.n1) {
-                    this.n1 = parseInt(this.n1.toString() + text);
-                }
-                else {
-                    this.n1 = parseInt(text);
-                }
-                this.span.textContent = this.n1.toString();
+                this[number] = parseInt(text);
+            }
+            this.span.textContent = this[number].toString();
+        };
+        Calculator.prototype.updateNumber = function (text) {
+            if (this.operator) {
+                this.updateN('n2', text);
+            }
+            else {
+                this.updateN('n1', text);
             }
         };
         Calculator.prototype.updateResult = function () {
@@ -83,12 +84,19 @@
                 result = this.n1 / this.n2;
             }
             this.span.textContent = result.toString();
+            this.n1 = null;
+            this.n2 = null;
+            this.operator = null;
+            this.result = result;
         };
         Calculator.prototype.typeJudge = function (text) {
             if ('0123456789'.indexOf(text) >= 0) {
                 this.updateNumber(text);
             }
             else if ('+-x÷'.indexOf(text) >= 0) {
+                if (this.n1 === null) {
+                    this.n1 = this.result;
+                }
                 this.operator = text;
             }
             else if ('='.indexOf(text) >= 0) {
