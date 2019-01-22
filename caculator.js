@@ -48,55 +48,63 @@
             output.appendChild(span);
             this.span = span;
         };
+        Calculator.prototype.updateNumber = function (text) {
+            if (this.operator) {
+                if (this.n2) {
+                    this.n2 = parseInt(this.n2.toString() + text);
+                }
+                else {
+                    this.n2 = parseInt(text);
+                }
+                this.span.textContent = this.n2.toString();
+            }
+            else {
+                if (this.n1) {
+                    this.n1 = parseInt(this.n1.toString() + text);
+                }
+                else {
+                    this.n1 = parseInt(text);
+                }
+                this.span.textContent = this.n1.toString();
+            }
+        };
+        Calculator.prototype.updateResult = function () {
+            var result;
+            if (this.operator === '+') {
+                result = this.n1 + this.n2;
+            }
+            else if (this.operator === '-') {
+                result = this.n1 - this.n2;
+            }
+            else if (this.operator === 'x') {
+                result = this.n1 * this.n2;
+            }
+            else if (this.operator === '÷') {
+                result = this.n1 / this.n2;
+            }
+            this.span.textContent = result.toString();
+        };
+        Calculator.prototype.typeJudge = function (text) {
+            if ('0123456789'.indexOf(text) >= 0) {
+                this.updateNumber(text);
+            }
+            else if ('+-x÷'.indexOf(text) >= 0) {
+                this.operator = text;
+            }
+            else if ('='.indexOf(text) >= 0) {
+                this.updateResult();
+            }
+            else if ('clear'.indexOf(text) >= 0) {
+                this.span.textContent = '0';
+            }
+        };
         Calculator.prototype.bindEvents = function () {
             var _this = this;
             this.container.addEventListener('click', function (e) {
                 if (e.target instanceof HTMLButtonElement) {
                     var button = e.target;
                     var text = button.textContent;
-                    //判断字符类型
-                    if ('0123456789'.indexOf(text) >= 0) {
-                        if (_this.operator) {
-                            if (_this.n2) {
-                                _this.n2 = parseInt(_this.n2.toString() + text);
-                            }
-                            else {
-                                _this.n2 = parseInt(text);
-                            }
-                            _this.span.textContent = _this.n2.toString();
-                        }
-                        else {
-                            if (_this.n1) {
-                                _this.n1 = parseInt(_this.n1.toString() + text);
-                            }
-                            else {
-                                _this.n1 = parseInt(text);
-                            }
-                            _this.span.textContent = _this.n1.toString();
-                        }
-                    }
-                    else if ('+-x÷'.indexOf(text) >= 0) {
-                        _this.operator = text;
-                    }
-                    else if ('='.indexOf(text) >= 0) {
-                        var result = void 0;
-                        if (_this.operator === '+') {
-                            result = _this.n1 + _this.n2;
-                        }
-                        else if (_this.operator === '-') {
-                            result = _this.n1 - _this.n2;
-                        }
-                        else if (_this.operator === 'x') {
-                            result = _this.n1 * _this.n2;
-                        }
-                        else if (_this.operator === '÷') {
-                            result = _this.n1 / _this.n2;
-                        }
-                        _this.span.textContent = result.toString();
-                    }
-                    else if ('clear'.indexOf(text) >= 0) {
-                        _this.span.textContent = '0';
-                    }
+                    _this.typeJudge(text);
                 }
             });
         };
