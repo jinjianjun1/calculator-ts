@@ -54,10 +54,10 @@
         };
         Calculator.prototype.updateN = function (number, text) {
             if (this[number]) {
-                this[number] = parseInt(this[number].toString() + text);
+                this[number] += text;
             }
             else {
-                this[number] = parseInt(text);
+                this[number] = text;
             }
             this.span.textContent = this[number].toString();
         };
@@ -69,19 +69,27 @@
                 this.updateN('n1', text);
             }
         };
+        Calculator.prototype.updateOperator = function (text) {
+            if (this.n1 === null) {
+                this.n1 = this.result;
+            }
+            this.operator = text;
+        };
         Calculator.prototype.updateResult = function () {
             var result;
+            var n1 = parseFloat(this.n1);
+            var n2 = parseFloat(this.n2);
             if (this.operator === '+') {
-                result = this.n1 + this.n2;
+                result = n1 + n2;
             }
             else if (this.operator === '-') {
-                result = this.n1 - this.n2;
+                result = n1 - n2;
             }
             else if (this.operator === 'x') {
-                result = this.n1 * this.n2;
+                result = n1 * n2;
             }
             else if (this.operator === '÷') {
-                result = this.n1 / this.n2;
+                result = n1 / n2;
             }
             this.span.textContent = result.toString();
             this.n1 = null;
@@ -90,14 +98,11 @@
             this.result = result;
         };
         Calculator.prototype.typeJudge = function (text) {
-            if ('0123456789'.indexOf(text) >= 0) {
+            if ('0123456789.'.indexOf(text) >= 0) {
                 this.updateNumber(text);
             }
             else if ('+-x÷'.indexOf(text) >= 0) {
-                if (this.n1 === null) {
-                    this.n1 = this.result;
-                }
-                this.operator = text;
+                this.updateOperator(text);
             }
             else if ('='.indexOf(text) >= 0) {
                 this.updateResult();

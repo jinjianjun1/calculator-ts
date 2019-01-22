@@ -6,10 +6,10 @@
             this.createButtons()
             this.bindEvents()
         }
-        public n1:number=null
-        public n2:number=null
+        public n1:string=null
+        public n2:string=null
         public operator:string=null
-        public result:number=null
+        public result:string=null
         public container:HTMLDivElement;
         public keys:Array<Array<string>>=[
             [  "clear", "÷", ],
@@ -57,13 +57,13 @@
         }
         updateN(number:string,text:string){
             if(this[number]){
-                this[number]=parseInt(this[number].toString()+ text)                  
+                this[number]+= text                  
             }else{
-                this[number]=parseInt(text)
+                this[number]=text
             }
             this.span.textContent=this[number].toString()
         }
-        updateNumber(text:string){
+        updateNumber(text:string):void{
                 if(this.operator){
                     this.updateN('n2',text)
                 }else{
@@ -71,16 +71,24 @@
                 }
                 
         }
-        updateResult(){
+        updateOperator(text:string):void{
+            if (this.n1===null) {
+                this.n1=this.result
+            }
+            this.operator=text
+        }
+        updateResult():void{
             let result
+            let n1:string=parseFloat(this.n1)
+            let n2:string=parseFloat(this.n2)
                 if (this.operator==='+') {
-                    result=this.n1+this.n2;
+                    result=n1+n2;
                 }else if(this.operator==='-'){
-                    result=this.n1-this.n2;
+                    result=n1-n2;
                 }else if (this.operator==='x') {
-                    result=this.n1*this.n2;
+                    result=n1*n2;
                 }else if (this.operator==='÷') {
-                    result=this.n1/this.n2;
+                    result=n1/n2;
                 }
                 this.span.textContent=result.toString()
                 this.n1=null
@@ -89,15 +97,12 @@
                 this.result=result
 
         }
-        typeJudge(text:string){
-            if ('0123456789'.indexOf(text)>=0) {
+        typeJudge(text:string):void{
+            if ('0123456789.'.indexOf(text)>=0) {
                 this.updateNumber(text)
             }
             else if ('+-x÷'.indexOf(text)>=0) {
-                if (this.n1===null) {
-                    this.n1=this.result
-                }
-                this.operator=text                
+                this.updateOperator(text)
             }else if ('='.indexOf(text)>=0) {
                 this.updateResult()                
             }else if('clear'.indexOf(text)>=0){
