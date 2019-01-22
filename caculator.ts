@@ -90,6 +90,10 @@
                 }else if (this.operator==='÷') {
                     result=n1/n2;
                 }
+                result=result
+                .toPrecision(12).replace(/0+$/g,'').replace(/0+e/, 'e')
+                console.log(result);
+
                 this.span.textContent=result.toString()
                 this.n1=null
                 this.n2=null
@@ -106,6 +110,10 @@
             }else if ('='.indexOf(text)>=0) {
                 this.updateResult()                
             }else if('clear'.indexOf(text)>=0){
+                this.n1=null
+                this.n2=null
+                this.operator=null
+                this.result=null
                 this.span.textContent='0'
             }
         }
